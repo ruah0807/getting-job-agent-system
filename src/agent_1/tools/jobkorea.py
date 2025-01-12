@@ -70,7 +70,7 @@ def login_and_search():
         submit_button = driver.find_element(By.CSS_SELECTOR, "button[class='button-submit'][data-name='직무']")
         submit_button.click()
         
-        
+        print("지역 선택 시작")
         jobtype_button = driver.find_element(By.CSS_SELECTOR, "button[data-name='location']")
         jobtype_button.click()
         jobtype_button = driver.find_element(By.CSS_SELECTOR, "button[data-name='서울']")
@@ -86,6 +86,7 @@ def login_and_search():
         submit_button_location = driver.find_element(By.CSS_SELECTOR, "button[class='button-submit'][data-name='지역']")
         submit_button_location.click()
 
+        print("경력 선택 시작")
         jobtype_button = driver.find_element(By.CSS_SELECTOR, "button[data-name='career']")
         jobtype_button.click()
         checkbox_label = driver.find_element(By.CSS_SELECTOR, "label[for='careertype1']")
