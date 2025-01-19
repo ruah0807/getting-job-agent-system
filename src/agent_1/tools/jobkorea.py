@@ -9,6 +9,7 @@ import os
 import time
 import traceback
 from dotenv import load_dotenv
+from selenium.common.exceptions import TimeoutException
 
 # .env 파일에서 환경 변수 로드
 load_dotenv()
@@ -98,12 +99,42 @@ def login_and_search():
         submit_button_career = driver.find_element(By.CSS_SELECTOR, "button[class='button-submit'][data-name='경력']")
         submit_button_career.click()
 
+        print("공고 리스트 순회")
+        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, "list-item")))
+        job_listings = driver.find_elements(By.CLASS_NAME, "list-item")
+        print("리스트 찾음1")
+        for i in range(len(job_listings)):
+            try:
+                # 각 반복에서 요소 재탐색
+                job_listings = driver.find_elements(By.CLASS_NAME, "list-item")
+                print("리스트 찾음2")
+                link = job_listings[i].find_element(By.CLASS_NAME, "information-title-link")
+                print("공고 클릭 시작")
+                
+                original_window = driver.current_window_handle
+                link.click()
+                print("공고 클릭 완료")
+
+                # 새 창이 열릴 때까지 대기
+                WebDriverWait(driver, 10).until(EC.new_window_is_opened(driver.window_handles))
+                print("창 핸들 목록:", driver.window_handles)
+
+                # 공고문 읽기
+                WebDriverWait(driver, 20).until(EC.presence_of_all_elements_located((By.CLASS_NAME, "lgiSubRead")))
+                print("공고문 읽기 완료")
+
+                driver.close()
+
+                driver.switch_to.window(original_window)
+
+            except Exception as e:
+                print(f"공고 처리 중 오류 발생: {e}")
+                traceback.print_exc()
+
 
     except Exception as e:
         print(f"오류 발생: {e}")
         traceback.print_exc()
-
-    
 
     # 종료 대기
     input("브라우저를 닫으려면 Enter 키를 누르세요.")
@@ -111,3 +142,4 @@ def login_and_search():
 
 if __name__ == "__main__":
     login_and_search() 
+    print("잡코리아 로그인 및 검색 완료")

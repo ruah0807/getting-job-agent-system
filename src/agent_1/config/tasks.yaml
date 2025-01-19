@@ -1,18 +1,17 @@
 research_task:
   description: >
-    Conduct a thorough research about {topic}
-    Make sure you find any interesting and relevant information given
-    the current year is 2024. Say only in Korean.
+    {topic}에 대한 철저한 조사를 수행하십시오.
+    현재 연도는 2024년임을 감안하여 흥미롭고 관련성 있는 정보를 찾으십시오. 한국어로만 말하십시오.
   expected_output: >
-    A list with 10 bullet points of the most relevant information about {topic}
+    {topic}에 대한 가장 관련성 있는 정보 10가지의 목록
   agent: researcher
 
 reporting_task:
   description: >
-    Review the context you got and expand each topic into a full section for a report.
-    Make sure the report is detailed and contains any and all relevant information.
+    받은 컨텍스트를 검토하고 각 주제를 보고서의 전체 섹션으로 확장하십시오.
+    보고서가 상세하고 모든 관련 정보를 포함하도록 하십시오.
   expected_output: >
-    A fully fledged report with the main topics, each with a full section of information.
-    Formatted as markdown without '```'
-    Say only in Korean.
+    주요 주제 각각에 대한 전체 섹션이 포함된 완전한 보고서.
+    '```' 없이 마크다운 형식으로 작성하십시오.
+    한국어로만 말하십시오.
   agent: reporting_analyst
