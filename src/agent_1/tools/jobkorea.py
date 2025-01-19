@@ -102,34 +102,63 @@ def login_and_search():
         print("공고 리스트 순회")
         WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, "list-item")))
         job_listings = driver.find_elements(By.CLASS_NAME, "list-item")
-        print("리스트 찾음1")
+
+        processed_count = 0
         for i in range(len(job_listings)):
+            if processed_count >= 3:
+                break
             try:
                 # 각 반복에서 요소 재탐색
                 job_listings = driver.find_elements(By.CLASS_NAME, "list-item")
-                print("리스트 찾음2")
                 link = job_listings[i].find_element(By.CLASS_NAME, "information-title-link")
-                print("공고 클릭 시작")
                 
-                original_window = driver.current_window_handle
                 link.click()
                 print("공고 클릭 완료")
 
+                
                 # 새 창이 열릴 때까지 대기
-                WebDriverWait(driver, 10).until(EC.new_window_is_opened(driver.window_handles))
-                print("창 핸들 목록:", driver.window_handles)
+                try:
+                    original_window = driver.current_window_handle
+                    WebDriverWait(driver, 20).until(lambda d: len(d.window_handles) > 1)
+                    print("창 핸들 목록:", driver.window_handles)
 
-                # 공고문 읽기
-                WebDriverWait(driver, 20).until(EC.presence_of_all_elements_located((By.CLASS_NAME, "lgiSubRead")))
-                print("공고문 읽기 완료")
+                    # 새 창 전환
+                    for window_handle in driver.window_handles:
+                        if window_handle != original_window:
+                            driver.switch_to.window(window_handle)
+                            break
 
-                driver.close()
+                    # 공고문 읽기
+                    WebDriverWait(driver, 20).until(EC.presence_of_all_elements_located((By.CLASS_NAME, "lgiSubRead")))
+                    
+                    # 공고문제목
+                    # h3 텍스트 가져오기
+                    h3_element = driver.find_element(By.CSS_SELECTOR, ".sumTit h3")
+                    header_text = h3_element.find_element(By.CLASS_NAME, "header").text
+                    full_text = h3_element.text
+                    
+                    # header 텍스트 제거
+                    sum_tit = full_text.replace(header_text, "").strip()
+                    print(f"\n공고제목 : {sum_tit}")
+                    co_name = driver.find_element(By.CLASS_NAME, "coName").text
+                    print(f"회사명 : {co_name}")
 
-                driver.switch_to.window(original_window)
+                    skill_list = driver.find_element(By.XPATH, "//dt[text()='스킬']/following-sibling::dd").text
+                    print(f"스킬 : {skill_list}\n")
 
+
+                    # 새 창 닫기
+                    driver.close()
+
+                    # 원래 창으로 돌아가기
+                    driver.switch_to.window(original_window)
+                    processed_count += 1  # 처리한 공고 수 증가
+
+                except TimeoutException:
+                    print("새 창이 열리지 않았습니다.")
             except Exception as e:
-                print(f"공고 처리 중 오류 발생: {e}")
-                traceback.print_exc()
+                    print(f"공고 처리 중 오류 발생: {e}")
+                    traceback.print_exc()
 
 
     except Exception as e:
